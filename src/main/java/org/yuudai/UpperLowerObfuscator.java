@@ -1,7 +1,7 @@
 package org.yuudai;
 
 /**
- * ${upper:}や${lower:}を使った難読化攻撃パターンを生成するクラス
+ * ${upper:}や${lower:}を使って難読化された攻撃パターンを生成するクラス
  */
 class UpperLowerObfuscator extends Obfuscator {
     static final String[] parts = {"${lower:*}", "${upper:*}", "*"};

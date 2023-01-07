@@ -1,7 +1,7 @@
 package org.yuudai;
 
 /**
- * 難読化された攻撃パターンを生成するクラス
+ * 難読化された攻撃パターンを生成する抽象クラス
  */
 public abstract class Obfuscator {
     static final String first = "${";
