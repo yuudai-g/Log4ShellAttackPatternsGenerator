@@ -2,6 +2,7 @@ package org.yuudai;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        UpperLowerObfuscator upperLowerObfuscator = new UpperLowerObfuscator();
+        System.out.println(upperLowerObfuscator.GenerateObfuscatedString());
     }
 }
