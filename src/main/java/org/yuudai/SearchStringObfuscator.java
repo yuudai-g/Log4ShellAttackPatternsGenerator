@@ -29,8 +29,13 @@ public class SearchStringObfuscator extends Obfuscator {
             }
             i += len;
             String substring = target.substring(i - len, i);
-            String tmp = CharMatcher.is('+').replaceFrom(parts, substring);
-            builder.append(CharMatcher.is('*').replaceFrom(tmp, ObfuscatorUtils.GenerateRandomString(10)));
+            switch ((int) (Math.random() * 1 + 0.5)) {
+                case 0 -> {
+                    String tmp = CharMatcher.is('+').replaceFrom(parts, substring);
+                    builder.append(CharMatcher.is('*').replaceFrom(tmp, ObfuscatorUtils.GenerateRandomString(10)));
+                }
+                case 1 -> builder.append(substring);
+            }
         } while ((c.length - i) > 0);
         return builder.toString();
     }
