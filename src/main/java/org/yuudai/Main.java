@@ -9,7 +9,7 @@ public class Main {
         obfuscations.add("${env:<A_>+:-#}");
         obfuscations.add("${lower:#}");
         obfuscations.add("${upper:#}");
-        obfuscations.add("${<Aa>*:<Aa>*:-#}");
+        obfuscations.add("${<A0a>*:<Aa0>*:-#}");
         obfuscations.add("${sys:<A_>+:-#}");
         obfuscations.add("${:-#}");
         obfuscations.add("${date:'#'}");
